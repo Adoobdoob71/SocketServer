@@ -6,31 +6,41 @@ import java.util.*;
 
 public class ClientThread extends Thread {
 
-  private Socket socket;
+  private UserSocket userSocket;
 
-  public ClientThread(Socket socket) {
-    this.socket = socket;
+  public ClientThread(UserSocket socket) {
+    this.userSocket = socket;
   }
 
-  public Socket getSocket() {
-    return socket;
+  public UserSocket getSocket() {
+    return userSocket;
   }
 
-  public void setSocket(Socket socket) {
-    this.socket = socket;
+  public void setSocket(UserSocket socket) {
+    this.userSocket = socket;
   }
 
   public void handleSocketInput() throws IOException {
-    BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-    String message = input.readLine();
-    if (message.equalsIgnoreCase("true")) {
-      // ServerThread.sendToClient(message, );
-    }
+    BufferedReader input = new BufferedReader(new InputStreamReader(userSocket.getSocket().getInputStream()));
+    String key = input.readLine();
+    sendToClient(key, userSocket.getNickname());
+  }
+
+  public static void sendToClient(String key, String message) throws IOException {
+    UserSocket socket = SocketHandler.socket_map.get(key);
+    PrintWriter output = new PrintWriter(socket.getSocket().getOutputStream());
+    output.println(message);
+    output.flush();
   }
 
   @Override
   public void run() {
-
+    try {
+      handleSocketInput();
+      run();
+    } catch (Exception exception) {
+      System.out.println(exception.getMessage());
+    }
   }
 
 }

@@ -2,9 +2,9 @@ package socket_server;
 
 import java.net.*;
 
-public class UserSocket {
+public class UserSocket implements java.io.Serializable {
   private String nickname;
-  private Socket socket;
+  private transient Socket socket;
 
   public UserSocket(String nickname, Socket socket) {
     this.nickname = nickname;

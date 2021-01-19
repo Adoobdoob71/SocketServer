@@ -23,14 +23,14 @@ public class ClientThread extends Thread {
   public void handleSocketInput() throws IOException {
     BufferedReader input = new BufferedReader(new InputStreamReader(userSocket.getSocket().getInputStream()));
     String key = input.readLine();
+    // move message to the socket name specified in the input
     sendToClient(key, userSocket.getNickname());
   }
 
   public static void sendToClient(String key, String message) throws IOException {
     UserSocket socket = SocketHandler.socket_map.get(key);
-    PrintWriter output = new PrintWriter(socket.getSocket().getOutputStream());
+    PrintWriter output = new PrintWriter(socket.getSocket().getOutputStream(), true);
     output.println(message);
-    output.flush();
   }
 
   @Override

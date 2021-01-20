@@ -9,7 +9,7 @@ public class SocketHandler {
   public static HashMap<String, UserSocket> socket_map = new HashMap<String, UserSocket>();
 
   public SocketHandler(HashMap<String, UserSocket> socket_map) {
-    this.socket_map = socket_map;
+    SocketHandler.socket_map = socket_map;
   }
 
   public SocketHandler() {
@@ -23,12 +23,15 @@ public class SocketHandler {
     return socket;
   }
 
-  public static void addSocket(UserSocket socket) throws Exception {
-    if (socket_map.get(socket.getNickname()) != null)
+  public static void addSocket(UserSocket userSocket) throws Exception {
+    if (socket_map.get(userSocket.getNickname()) != null)
       throw new Exception("Exception: The specified name is already chosen, please choose a different one");
-    socket_map.put(socket.getNickname(), socket);
-    ClientThread clientThread = new ClientThread(socket);
+    socket_map.put(userSocket.getNickname(), userSocket);
+    ClientThread clientThread = new ClientThread(userSocket);
     clientThread.start();
+    // socket_map.put(socket.getNickname(), socket);
+    // ClientThread clientThread = new ClientThread(socket);
+    // clientThread.start();
   }
 
 }

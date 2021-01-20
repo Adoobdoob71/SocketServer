@@ -23,14 +23,26 @@ public class ClientThread extends Thread {
   public void handleSocketInput() throws IOException {
     BufferedReader input = new BufferedReader(new InputStreamReader(userSocket.getSocket().getInputStream()));
     String key = input.readLine();
-    // move message to the socket name specified in the input
-    sendToClient(key, userSocket.getNickname());
+    if (key.equalsIgnoreCase("CLOSETHREAD")) {
+      input.close();
+      userSocket.getSocket().close();
+      this.stop();
+      return;
+    }
+    Chat chat = new Chat();
+    chat.addParticipant(this.userSocket);
+    ChatClient chatClient = new ChatClient(this.userSocket, chat);
+    chatClient.start();
+    sendInviteToAnotherClient(key, userSocket.getNickname(), chat);
   }
 
-  public static void sendToClient(String key, String message) throws IOException {
+  public void sendInviteToAnotherClient(String key, String inviteNickname, Chat chat) throws IOException {
     UserSocket socket = SocketHandler.socket_map.get(key);
     PrintWriter output = new PrintWriter(socket.getSocket().getOutputStream(), true);
-    output.println(message);
+    output.println(inviteNickname);
+    chat.addParticipant(SocketHandler.socket_map.get(key));
+    ChatClient chatClient = new ChatClient(SocketHandler.socket_map.get(key), chat);
+    chatClient.start();
   }
 
   @Override
